@@ -43,6 +43,7 @@ def load_database():
 # 사용자 세션 관리 (웹 환경용)
 user_sessions = {}
 
+
 def get_session(user_id):
     if user_id not in user_sessions:
         user_sessions[user_id] = {
@@ -141,23 +142,22 @@ def login_(input_id, input_pw):
     return False
 
 def get_chat_history(user_id):
-    file_path = os.path.join(USER_DATA, f'{user_id}_chat.json')
+    file_path = USER_DATA + '/' + user_id + '_chat.json'
     if os.path.exists(file_path):
         with open(file_path, 'r', encoding='utf-8') as f:
             return json.load(f)
     return {'user_chat': [], 'bot_chat': []}
 
 def clear_chat_history(user_id):
-    file_path = os.path.join(USER_DATA, f'{user_id}_chat.json')
+    global chat_data
+    file_path = USER_DATA + '/' + user_id + '_chat.json'
     chat_data = {'user_chat': [], 'bot_chat': []}
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(chat_data, f, ensure_ascii=False, indent=4)
     
-    session = get_session(user_id)
-    session['last_topic'] = ''
-    session['chat_topic'] = ''
-    session['memory'] = ''
-
+    if user_id in user_sessions:
+        user_sessions[user_id]['last_topic'] = ''
+        user_sessions[user_id]['chat_topic'] = ''
 def detect_topic(user_input, session):
     session['chat_topic'] = ''
     
